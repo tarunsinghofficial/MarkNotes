@@ -1,5 +1,14 @@
+import { NextUIProvider } from "@nextui-org/react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import MyNavbar from "../app/components/Navbar";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton
+} from '@clerk/nextjs'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,12 +27,17 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <ClerkProvider>
+    <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
-        {children}
+        <NextUIProvider>
+          <MyNavbar />
+          {children}
+        </NextUIProvider>
       </body>
     </html>
+    </ClerkProvider>
   );
 }
