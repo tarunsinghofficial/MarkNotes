@@ -7,8 +7,8 @@ import {
   SignInButton,
   SignedIn,
   SignedOut,
-  UserButton
-} from '@clerk/nextjs'
+  UserButton,
+} from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,16 +28,16 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-    <html lang="en" className="h-full">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
-      >
-        <NextUIProvider>
-          <MyNavbar />
-          {children}
-        </NextUIProvider>
-      </body>
-    </html>
+      <html lang="en" className="h-full">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+        >
+          <NextUIProvider>
+            <MyNavbar />
+            {children}
+          </NextUIProvider>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }

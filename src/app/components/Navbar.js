@@ -12,6 +12,8 @@ import {
 } from "@nextui-org/navbar";
 import { Link } from "@nextui-org/link";
 import { Button } from "@nextui-org/button";
+import { SignOutButton, SignInButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 export const AcmeLogo = () => {
   return (
@@ -42,6 +44,8 @@ export default function MyNavbar() {
     "Log Out",
   ];
 
+  const {user} = useUser();
+
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen}>
       <NavbarContent>
@@ -51,11 +55,11 @@ export default function MyNavbar() {
         />
         <NavbarBrand>
           <AcmeLogo />
-          <p className="font-bold text-inherit">ACME</p>
+          <p className="text-inherit font-bold">ACME</p>
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="sm:flex hidden gap-4" justify="center">
         <NavbarItem>
           <Link color="foreground" href="#">
             Features
@@ -72,14 +76,9 @@ export default function MyNavbar() {
           </Link>
         </NavbarItem>
       </NavbarContent>
-      <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
+      <NavbarContent>
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
-            Sign Up
-          </Button>
+          {user ? <SignOutButton /> : <SignInButton />}
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>

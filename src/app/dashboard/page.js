@@ -1,20 +1,97 @@
-import { SignOutButton } from "@clerk/nextjs";
+"use client";
 import { Button } from "@nextui-org/button";
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import { X } from "lucide-react";
 
-function page() {
+function Page() {
+  // Load notes from localStorage or initialize with default notes
+  const [notes, setNotes] = useState(() => {
+    const savedNotes = localStorage.getItem("notes");
+    return savedNotes ? JSON.parse(savedNotes) : [];
+  });
+
+  const [currentNote, setCurrentNote] = useState(() =>
+    notes.length > 0 ? notes[0] : { id: 1, title: "New Note", content: "" }
+  );
+
+  // Save notes to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("notes", JSON.stringify(notes));
+  }, [notes]);
+
+  // Add a new note
+  const addNewNote = () => {
+    const newNote = {
+      id: notes.length + 1,
+      title: `Note ${notes.length + 1}`,
+      content: `Start your notes here...`,
+    };
+    setNotes([...notes, newNote]);
+    setCurrentNote(newNote);
+  };
+
+  // Update the content of the current note
+  const updateCurrentNoteContent = (content) => {
+    setCurrentNote({ ...currentNote, content });
+    setNotes(
+      notes.map((note) =>
+        note.id === currentNote.id ? { ...note, content } : note
+      )
+    );
+  };
+
   return (
     <div>
-      <h1>Dashboard</h1>
-      
-      <SignOutButton />
+      <div className="flex justify-between p-4">
+        {/* Sidebar */}
+        <div className="fixed w-1/4 h-screen p-4 overflow-y-scroll bg-gray-100">
+          <h2 className="mb-4 text-lg font-bold">Your Notes</h2>
+          <Button color="primary" className="w-full mb-4" onClick={addNewNote}>
+            Add New Note
+          </Button>
+          <ul>
+            {notes.map((note) => (
+              <li
+                key={note.id}
+                className={`relative p-2 rounded-md cursor-pointer mb-2 ${
+                  currentNote.id === note.id
+                    ? "bg-blue-200 text-blue-900"
+                    : "bg-gray-200 hover:bg-gray-300"
+                }`}
+                onClick={() => setCurrentNote(note)}
+              >
+                <h3 className="text-lg font-bold">{note.title}</h3>
+                <X
+                  size={16}
+                  className="top-1 right-1 absolute text-gray-500 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setNotes(notes.filter((n) => n.id !== note.id));
+                    setCurrentNote(notes[0]);
+                  }}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      <div className="container mx-auto">
-        <span className="font-bold">dfdf</span>
+        {/* Editor */}
+        <div className="left-1/4 absolute w-3/4 p-4 ml-4">
+          <h1 className="mb-4 text-xl font-bold">{currentNote.title}</h1>
+          <textarea
+            className="h-1/2 w-full p-2 mb-4 border border-gray-300 rounded-md"
+            value={currentNote.content}
+            onChange={(e) => updateCurrentNoteContent(e.target.value)}
+          />
+          <h2 className="mb-2 text-lg font-bold">Markdown Preview:</h2>
+          <div className="bg-gray-50 p-4 border border-gray-300 rounded-md">
+            <ReactMarkdown>{currentNote.content}</ReactMarkdown>
+          </div>
+        </div>
       </div>
-
     </div>
-  )
+  );
 }
 
-export default page
+export default Page;
